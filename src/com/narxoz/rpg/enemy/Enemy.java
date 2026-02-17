@@ -60,30 +60,82 @@ import java.util.List;
  */
 public interface Enemy {
 
-    // TODO: Define core stat methods
-    // - String getName()
-    // - int getHealth()
-    // - int getDamage()
-    // - int getDefense()
-    // - int getSpeed()
+    // ============================================================
+    // CORE STAT METHODS
+    // ============================================================
 
-    // TODO: Define ability methods
-    // - List<Ability> getAbilities()
+    /**
+     * @return The name of this enemy
+     */
+    String getName();
 
-    // TODO: Define loot methods
-    // - LootTable getLootTable()
+    /**
+     * @return Current health points
+     */
+    int getHealth();
 
-    // TODO: Define display method
-    // - void displayInfo()   (shows all stats, abilities, loot)
+    /**
+     * @return Damage this enemy deals per attack
+     */
+    int getDamage();
 
-    // TODO: Define clone method for Prototype pattern
-    // - Enemy clone()
-    //
-    // CRITICAL: This must perform DEEP COPY!
-    // If you do shallow copy, cloned enemies will share ability
-    // and loot references with the original — causing bugs!
-    //
-    // Test your clone: modify the clone's abilities.
-    // Does the original change? If yes → your copy is too shallow!
+    /**
+     * @return Defensive value (damage reduction)
+     */
+    int getDefense();
+
+    /**
+     * @return Speed stat (attack priority)
+     */
+    int getSpeed();
+
+    // ============================================================
+    // ABILITY METHODS
+    // ============================================================
+
+    /**
+     * @return Unmodifiable list of this enemy's abilities
+     */
+    List<Ability> getAbilities();
+
+    // ============================================================
+    // LOOT METHODS
+    // ============================================================
+
+    /**
+     * @return The loot table this enemy drops on defeat
+     */
+    LootTable getLootTable();
+
+    // ============================================================
+    // DISPLAY METHOD
+    // ============================================================
+
+    /**
+     * Displays all information about this enemy:
+     * - Name, Health, Damage, Defense, Speed
+     * - All abilities with descriptions
+     * - Loot drops
+     */
+    void displayInfo();
+
+    // ============================================================
+    // PROTOTYPE PATTERN METHOD
+    // ============================================================
+
+    /**
+     * Creates a DEEP COPY of this enemy for variant creation.
+     *
+     * CRITICAL REQUIREMENTS:
+     * - Primitive stats (health, damage, etc.) → direct copy
+     * - Ability list → NEW list with CLONED abilities (not references!)
+     * - LootTable → CLONED (not reference!)
+     *
+     * TEST: Clone an enemy, modify the clone's abilities.
+     * If the original's abilities change → BUG: too shallow!
+     *
+     * @return A new Enemy instance completely independent from this one
+     */
+    Enemy clone();
 
 }

@@ -30,11 +30,27 @@ package com.narxoz.rpg.combat;
  */
 public interface Ability {
 
-    // TODO: Define ability behavior methods
-    // Consider:
-    // - String getName()
-    // - int getDamage()
-    // - String getDescription()
-    // - Ability clone()  <-- IMPORTANT for deep copying!
+    /**
+     * @return The name of this ability (e.g., "Flame Breath")
+     */
+    String getName();
+
+    /**
+     * @return The damage this ability deals (can be 0 for defensive abilities)
+     */
+    int getDamage();
+
+    /**
+     * @return A description of what this ability does
+     */
+    String getDescription();
+
+    /**
+     * Creates a deep copy of this ability for Prototype pattern.
+     * CRITICAL: Must be a true independent copy!
+     *
+     * @return A new Ability instance with the same properties
+     */
+    Ability clone();
 
 }
