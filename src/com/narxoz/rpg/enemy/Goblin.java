@@ -73,8 +73,7 @@ public class Goblin implements Enemy {
         this.defense = 5;
         this.speed = 35;
         this.abilities = new ArrayList<>();
-        // TODO: Initialize with default abilities
-        // TODO: Initialize with default loot table
+        this.lootTable = null;
     }
 
     // TODO: Implement methods from Enemy interface
@@ -89,37 +88,72 @@ public class Goblin implements Enemy {
         return health;
     }
 
+    public int getDamage() {
+        return damage;
+    }
+
+    public int getDefense() {
+        return defense;
+    }
+
+    public int getSpeed() {
+        return speed;
+    }
+
+    public List<Ability> getAbilities() {
+        return new ArrayList<>(abilities);
+    }
+
+    public LootTable getLootTable() {
+        return lootTable;
+    }
+
     public void displayInfo() {
         System.out.println("=== " + name + " (Goblin) ===");
         System.out.println("Health: " + health + " | Damage: " + damage
                 + " | Defense: " + defense + " | Speed: " + speed);
-        System.out.println("Abilities: " + abilities.size() + " ability(ies)");
-        // TODO: Display abilities details
-        // TODO: Display loot table
+        System.out.println("Abilities (" + abilities.size() + "):");
+        for (Ability ability : abilities) {
+            System.out.println("  - " + ability.getName() + ": " + ability.getDescription());
+        }
+        if (lootTable != null) {
+            System.out.println(lootTable.getLootInfo());
+        } else {
+            System.out.println("Loot: None");
+        }
     }
 
-    // TODO: Implement clone() for Prototype pattern
-    // This is CRITICAL! You must deep copy:
-    //   - The abilities list (create new list, clone each ability)
-    //   - The loot table (clone it)
-    //   - Primitive fields can be copied directly
-    //
-    // Example skeleton:
-    // public Enemy clone() {
-    //     Goblin copy = new Goblin(this.name);
-    //     copy.health = this.health;
-    //     copy.damage = this.damage;
-    //     copy.defense = this.defense;
-    //     copy.speed = this.speed;
-    //     copy.abilities = ???  // DEEP COPY! Not just = this.abilities!
-    //     copy.lootTable = ???  // DEEP COPY!
-    //     return copy;
-    // }
+    public Enemy clone() {
+        Goblin copy = new Goblin(this.name);
+        copy.health = this.health;
+        copy.damage = this.damage;
+        copy.defense = this.defense;
+        copy.speed = this.speed;
 
-    // TODO: Add helper methods for Prototype variant creation
-    // Consider methods like:
-    // - void multiplyStats(double multiplier) — for Elite/Champion variants
-    // - void addAbility(Ability ability) — for enhanced variants
-    // - void setElement(String element) — for elemental variants
+        copy.abilities = new ArrayList<>();
+        for (Ability ability : this.abilities) {
+            copy.abilities.add(ability.clone());
+        }
+
+        copy.lootTable = this.lootTable != null ? this.lootTable.clone() : null;
+        return copy;
+    }
+
+    public void multiplyStats(double multiplier) {
+        this.health = (int) Math.round(this.health * multiplier);
+        this.damage = (int) Math.round(this.damage * multiplier);
+        this.defense = (int) Math.round(this.defense * multiplier);
+        this.speed = (int) Math.round(this.speed * multiplier);
+    }
+
+    public void addAbility(Ability ability) {
+        if (ability != null) {
+            this.abilities.add(ability);
+        }
+    }
+
+    public void setLootTable(LootTable lootTable) {
+        this.lootTable = lootTable;
+    }
 
 }
