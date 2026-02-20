@@ -92,18 +92,14 @@ public class DragonBoss implements Enemy {
     private int wingspan;
 
     /**
-     * THE TELESCOPING CONSTRUCTOR FROM HELL.
+     * CONSTRUCTOR (called only by BossEnemyBuilder).
      *
-     * Count the parameters: FIFTEEN (15).
-     * Can you tell which parameter is which when calling this?
-     * Can you remember the order?
-     * What if you want to add a 16th parameter later?
+     * Package: visible from same package (com.narxoz.rpg.builder)
+     * Direct instantiation outside of Builder is strongly discouraged!
      *
-     * THIS is why the Builder pattern exists.
-     *
-     * After you implement your Builder, this constructor should be
-     * either simplified (package-private, called only by Builder)
-     * or replaced entirely.
+     * This solves the "Telescoping Constructor" anti-pattern:
+     *   BEFORE: public constructor with 15 parameters (nightmare!)
+     *   AFTER: accessed only via BossEnemyBuilder
      */
     public DragonBoss(String name, int health, int damage, int defense,
                       int speed, String element,
@@ -130,23 +126,55 @@ public class DragonBoss implements Enemy {
         this.wingspan = wingspan;
     }
 
-    // TODO: Implement methods from Enemy interface
+    // ============================================================
+    // ENEMY INTERFACE IMPLEMENTATION
+    // ============================================================
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public int getHealth() {
         return health;
     }
 
+    @Override
+    public int getDamage() {
+        return damage;
+    }
+
+    @Override
+    public int getDefense() {
+        return defense;
+    }
+
+    @Override
+    public int getSpeed() {
+        return speed;
+    }
+
+    @Override
+    public List<Ability> getAbilities() {
+        return new ArrayList<>(abilities);
+    }
+
+    @Override
+    public LootTable getLootTable() {
+        return lootTable;
+    }
+
+    @Override
     public void displayInfo() {
         System.out.println("=== " + name + " (Dragon Boss) ===");
         System.out.println("Health: " + health + " | Damage: " + damage
                 + " | Defense: " + defense + " | Speed: " + speed);
         System.out.println("Element: " + element);
         System.out.println("Abilities (" + abilities.size() + "):");
-        // TODO: Display each ability's details
+        for (Ability ability : abilities) {
+            System.out.println("  - " + ability.getName() + ": " + ability.getDescription());
+        }
         System.out.println("Boss Phases: " + phases.size());
         for (Map.Entry<Integer, Integer> phase : phases.entrySet()) {
             System.out.println("  Phase " + phase.getKey()
@@ -156,21 +184,46 @@ public class DragonBoss implements Enemy {
         System.out.println("Can Fly: " + canFly
                 + " | Breath Attack: " + hasBreathAttack
                 + " | Wingspan: " + wingspan);
-        // TODO: Display loot table
+        if (lootTable != null) {
+            System.out.println(lootTable.getLootInfo());
+        }
     }
 
-    // TODO: Implement clone() for Prototype pattern
-    // DragonBoss has MANY fields that need deep copying:
-    //   - abilities (List<Ability>) → deep copy each ability
-    //   - phases (Map<Integer, Integer>) → copy the map
-    //   - lootTable → deep copy
-    //   - primitive fields → direct copy
-    //
-    // This is more complex than Goblin.clone()!
-    // That's the challenge of Prototype with complex objects.
+    @Override
+    public Enemy clone() {
+        // Deep copy: create new dragon with cloned abilities and loot
+        DragonBoss copy = new DragonBoss(
+            this.name, this.health, this.damage, this.defense, this.speed,
+            this.element,
+            new ArrayList<>(this.abilities), // Will be deep copied below
+            this.phases.getOrDefault(1, this.health),
+            this.phases.getOrDefault(2, this.health / 2),
+            this.phases.getOrDefault(3, this.health / 4),
+            this.lootTable != null ? this.lootTable.clone() : null,
+            this.aiBehavior,
+            this.canFly,
+            this.hasBreathAttack,
+            this.wingspan
+        );
 
-    // TODO: Add helper methods for variant creation
-    // - void setElement(String element) — for elemental variants
-    // - void multiplyStats(double multiplier) — for difficulty tiers
+        // Deep copy abilities
+        copy.abilities.clear();
+        for (Ability ability : this.abilities) {
+            copy.abilities.add(ability.clone());
+        }
+
+        return copy;
+    }
+
+    // ============================================================
+    // HELPER METHODS FOR VARIANT CREATION
+    // ============================================================
+
+    public void multiplyStats(double multiplier) {
+        this.health = (int) Math.round(this.health * multiplier);
+        this.damage = (int) Math.round(this.damage * multiplier);
+        this.defense = (int) Math.round(this.defense * multiplier);
+        this.speed = (int) Math.round(this.speed * multiplier);
+    }
 
 }

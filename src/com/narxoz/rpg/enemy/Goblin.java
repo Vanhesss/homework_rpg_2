@@ -156,4 +156,21 @@ public class Goblin implements Enemy {
         this.lootTable = lootTable;
     }
 
+    // Public setters for Builder
+    public void setHealthValue(int health) {
+        this.health = health;
+    }
+
+    public void setDamageValue(int damage) {
+        this.damage = damage;
+    }
+
+    public void setDefenseValue(int defense) {
+        this.defense = defense;
+    }
+
+    public void setSpeedValue(int speed) {
+        this.speed = speed;
+    }
+
 }
